@@ -15,6 +15,7 @@ contract :IFacetSwapV1Router, abstract: true do
     deadline: :uint256
   }, :public, returns: { amountA: :uint256, amountB: :uint256, liquidity: :uint256 }
   function :factory, :public, returns: :address
+  function :WETH, :public, returns: :address
 end
 
 contract :IFacetSwapV1Factory, abstract: true do
@@ -44,7 +45,6 @@ contract :PresaleERC20, is: [:ERC20, :Ownable] do
   constructor(
     name: :string,
     symbol: :string,
-    _wethAddress: :address,
     _facetSwapRouterAddress: :address,
     _maxSupply: :uint256,
     _presaleTokenPercentage: :uint256,
@@ -52,14 +52,13 @@ contract :PresaleERC20, is: [:ERC20, :Ownable] do
   ) {
     require(_presaleTokenPercentage <= 50, "Presale token percentage must not exceed 50")
     require(_presaleTokenPercentage > 0, "Presale token percentage must exceed 0")
-    require(_wethAddress != address(0), "WETH address not set")
 
-    decimals = ERC20(_wethAddress).decimals
+    s.wethAddress = IFacetSwapV1Router(_facetSwapRouterAddress).WETH
+    decimals = ERC20(s.wethAddress).decimals
 
     ERC20.constructor(name: name, symbol: symbol, decimals: decimals)
     Ownable.constructor(owner: msg.sender)
 
-    s.wethAddress = _wethAddress
     s.facetSwapRouterAddress = _facetSwapRouterAddress
     s.maxSupply = _maxSupply
     s.tokensForPresale = (_maxSupply * _presaleTokenPercentage) / 100

@@ -68,7 +68,6 @@ RSpec.describe "PresaleERC20", type: :model do
           args: {
             name: "PresaleToken",
             symbol: "PST",
-            _wethAddress: weth_contract.address,
             _facetSwapRouterAddress: router_contract.address,
             _maxSupply: max_supply,
             _presaleTokenPercentage: 45,
