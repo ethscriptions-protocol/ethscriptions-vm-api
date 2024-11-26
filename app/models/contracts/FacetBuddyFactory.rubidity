@@ -63,6 +63,12 @@ contract :FacetBuddyFactory, is: [:Upgradeable], upgradeable: true do
   end
   
   function :predictBuddyAddress, { forUser: :address }, :public, :view, returns: :address do
+    existing = s.buddyForUser[forUser]
+    
+    if existing != address(0)
+      return existing
+    end
+    
     return create2_address(
       salt: keccak256(abi.encodePacked(forUser)),
       deployer: address(this),
