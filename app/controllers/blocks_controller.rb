@@ -11,7 +11,7 @@ class BlocksController < ApplicationController
       etag = EthBlock.max_processed_block_number
       
       set_cache_control_headers(etag: etag, max_age: 12.seconds) do
-        cache_key = ["blocks_index", scope, page, per_page]
+        cache_key = ["blocks_index", scope, page, per_page, etag]
         
         result = Rails.cache.fetch(cache_key) do
           res = scope.page(page).per(per_page).to_a

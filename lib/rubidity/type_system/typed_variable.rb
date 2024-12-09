@@ -110,6 +110,8 @@ class TypedVariable
     else
       super
     end
+  rescue ZeroDivisionError => e
+    raise ContractErrors::VariableTypeError.new("Division by zero")
   end
 
   def respond_to_missing?(name, include_private = false)

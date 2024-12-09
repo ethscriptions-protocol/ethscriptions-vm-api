@@ -196,6 +196,27 @@ RSpec.describe "PresaleERC20", type: :model do
         withdraw_tokens_error(owner_address, "No token balance")
       end
     end
+    
+    context 'after presale ends with no shares bought' do
+      before(:each) do
+        start_presale_success()
+        travel_to Time.now + 1.hour
+      end
+
+      it 'handles no shares bought during presale' do
+        trigger_contract_interaction_and_expect_error(
+          error_msg_includes: "Division by zero",
+          from: owner_address,
+          payload: {
+            to: presale_contract.address,
+            data: {
+              function: "finalize",
+              args: {}
+            }
+          }
+        )
+      end
+    end
   end
 
   # HELPER FUNCTIONS
